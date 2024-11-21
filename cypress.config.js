@@ -29,7 +29,7 @@ module.exports = defineConfig({
 
       return config; // Return the config object
     },
-    baseUrl: 'https://www.rcwilley.com',
+    baseUrl: 'https://www.rcwilley.com/',
     specPattern: 'cypress/e2e/features/**/*.feature',
     chromeWebSecurity: false
   },
