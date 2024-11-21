@@ -1,0 +1,39 @@
+stages:
+  - test
+  - performance
+
+Cypress-test-job:
+  image: cypress/browsers
+  stage: test
+  script:
+    - npm ci
+    - npm install cypress-cucumber-preprocessor --save-dev
+    - npm install mochawesome --save-dev
+    - npm install --save-dev mochawesome mochawesome-merge mochawesome-report-generator cypress-mochawesome-reporter
+    - npx cypress run
+    - echo "Inspecting mochawesome-report/.jsons directory:"
+    - ls -l mochawesome-report/.jsons/
+  artifacts:
+    when: always
+    paths:
+      - mochawesome-report/**
+      - cypress/screenshots/**/*.png
+      - cypress/videos/**/*.mp4
+    expire_in: 12 days
+
+lighthouse-job:
+  image: node:18
+  stage: performance
+  script:
+    - apt-get update && apt-get install -y wget gnupg
+    - wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
+    - sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+    - apt-get update && apt-get install -y google-chrome-stable
+    - npm install -g @lhci/cli
+    - lhci autorun --max-wait-for-load=60000 --debug
+  artifacts:
+    paths:
+      - lighthouse-report/**  # Include the Lighthouse reports in artifacts
+    expire_in: 7 days
+  dependencies:
+    - Cypress-test-job  # Run after Cypress tests
