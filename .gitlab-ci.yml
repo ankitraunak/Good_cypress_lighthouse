@@ -25,19 +25,19 @@ lighthouse-job:
   image: node:18
   stage: performance
   script:
-    # Install Chrome and dependencies
+    # Installing Chrome and dependencies
     - apt-get update && apt-get install -y wget gnupg
     - wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
     - sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
     - apt-get update && apt-get install -y google-chrome-stable
     
-    # Install Lighthouse CI
+    # Installing Lighthouse CI
     - npm install -g @lhci/cli@latest
 
-    # Run Lighthouse with increased wait time and debug options
+    # Running Lighthouse with increased wait time and debug options
     - lhci autorun --max-wait-for-load=120000 --chrome-flags="--no-sandbox --disable-dev-shm-usage" || true
 
-    # Move report to the artifacts directory
+    # Moving report to the artifacts directory
     - mkdir -p lighthouse-report
     - mv .lighthouseci/* ./lighthouse-report/
 
