@@ -50,5 +50,3 @@ lighthouse-job:
     - Cypress-test-job  # Ensure this runs after Cypress tests
 
   # Specify tags or other runner-specific configurations (if needed)
-  tags:
-    - docker
