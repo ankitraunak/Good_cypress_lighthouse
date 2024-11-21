@@ -4,7 +4,7 @@ module.exports = {
       url: ['https://www.rcwilley.com/'],
       numberOfRuns: 3,
       settings: {
-        chromeFlags: ['--no-sandbox']
+        chromeFlags: ['--no-sandbox --disable-dev-shm-usage']
       }
     },
     assert: {

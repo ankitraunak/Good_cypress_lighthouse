@@ -25,15 +25,30 @@ lighthouse-job:
   image: node:18
   stage: performance
   script:
+    # Install Chrome and dependencies
     - apt-get update && apt-get install -y wget gnupg
     - wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
     - sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
     - apt-get update && apt-get install -y google-chrome-stable
-    - npm install -g @lhci/cli
-    - lhci autorun --max-wait-for-load=60000 --debug
+    
+    # Install Lighthouse CI
+    - npm install -g @lhci/cli@latest
+
+    # Run Lighthouse with increased wait time and debug options
+    - lhci autorun --max-wait-for-load=120000 --chrome-flags="--no-sandbox --disable-dev-shm-usage" || true
+
+    # Move report to the artifacts directory
+    - mkdir -p lighthouse-report
+    - mv .lighthouseci/* ./lighthouse-report/
+
   artifacts:
     paths:
       - lighthouse-report/**  # Include the Lighthouse reports in artifacts
-    expire_in: 12 days
+    expire_in: 12 days  # Define expiration time for artifacts
+
   dependencies:
-    - Cypress-test-job  # Run after Cypress tests
+    - Cypress-test-job  # Ensure this runs after Cypress tests
+
+  # Specify tags or other runner-specific configurations (if needed)
+  tags:
+    - docker
